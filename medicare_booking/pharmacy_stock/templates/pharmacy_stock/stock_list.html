@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Pharmacy Stock - Medicare Booking{% endblock %}
+
+{% block content %}
+<h2>Pharmacy Stock</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Pharmacy</th>
+            <th>Medicine</th>
+            <th>Manufacturer</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Expiry Date</th>
+            <th>Available</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock.medicine_instance_id }}</td>
+            <td>{{ stock.pharmacy.pharmacy_name }}</td>
+            <td>{{ stock.medicine.medicine_name }}</td>
+            <td>{{ stock.manufacturer.name }}</td>
+            <td>{{ stock.price }}</td>
+            <td>{{ stock.stock_quantity }}</td>
+            <td>{{ stock.expiry_date }}</td>
+            <td>
+                {% if stock.is_available %}
+                Yes
+                {% else %}
+                No
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No stock found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

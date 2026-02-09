@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Pharmacies - Medicare Booking{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <h2>Pharmacies</h2>
+
+    <form method="get" action="" style="margin-bottom: 20px;">
+        <input type="text" name="pincode" placeholder="Enter Pincode" value="{{ request.GET.pincode|default:'' }}">
+        <button type="submit">Search</button>
+        {% if request.GET.pincode %}
+        <a href="{% url 'pharmacy_list' %}" class="button-secondary">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if message %}
+    <div class="message">{{ message }}</div>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Pincode</th>
+                <th>Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pharmacy in pharmacies %}
+            <tr>
+                <td>{{ pharmacy.pharmacy_id }}</td>
+                <td>{{ pharmacy.pharmacy_name }}</td>
+                <td>{{ pharmacy.pincode }}</td>
+                <td>{{ pharmacy.contact }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No pharmacies found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

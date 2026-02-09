@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0D6EFD;
+  --color-background: #F8F9FA;
+  --color-accent-teal: #20c997;
+  --color-accent-red: #dc3545;
+  --font-sans: Inter, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-gray-900 font-sans;
+  }
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+}
+
+.btn-primary {
+  @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors;
+}

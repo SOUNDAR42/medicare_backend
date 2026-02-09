@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Hospitals - Medicare Booking{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <h2>Search Hospitals</h2>
+
+    <form method="get" action="" style="margin-bottom: 20px;">
+        <input type="text" name="pincode" placeholder="Enter Pincode" value="{{ request.GET.pincode|default:'' }}">
+        <button type="submit">Search</button>
+        {% if request.GET.pincode %}
+        <a href="{% url 'hospital_search' %}" class="button-secondary">Clear</a>
+        {% endif %}
+    </form>
+
+    {% if message %}
+    <div class="message">{{ message }}</div>
+    {% endif %}
+
+    {% if hospitals %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Pincode</th>
+                <th>Contact</th>
+                <th>Working Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hospital in hospitals %}
+            <tr>
+                <td>{{ hospital.hospital_name }}</td>
+                <td>{{ hospital.location }}</td>
+                <td>{{ hospital.pincode }}</td>
+                <td>{{ hospital.contact }}</td>
+                <td>{{ hospital.working_hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    {% if request.GET.pincode %}
+    <p>No hospitals found.</p>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Medicines - Medicare Booking{% endblock %}
+
+{% block content %}
+<h2>Medicines</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Dosage Form</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicine in medicines %}
+        <tr>
+            <td>{{ medicine.medicine_id }}</td>
+            <td>{{ medicine.medicine_name }}</td>
+            <td>{{ medicine.description }}</td>
+            <td>{{ medicine.dosage_form }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No medicines found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
