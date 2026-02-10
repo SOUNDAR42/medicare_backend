@@ -1,9 +1,24 @@
 from django.shortcuts import render
-from rest_framework import views, status
+from rest_framework import viewsets, views, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from .serializers import PharmacySerializer
 from .models import Pharmacy
 from medicare_booking.services import search_entities_by_pincode
+
+class PharmacyViewSet(viewsets.ModelViewSet):
+    queryset = Pharmacy.objects.all()
+    serializer_class = PharmacySerializer
+
+    @action(detail=True, methods=['get'])
+    def medicine(self, request, pk=None):
+        from pharmacy_stock.models import Pharmacy_Medicine
+        from pharmacy_stock.serializers import SimplifiedPharmacyMedicineSerializer
+        
+        pharmacy = self.get_object()
+        medicines = Pharmacy_Medicine.objects.filter(pharmacy=pharmacy)
+        serializer = SimplifiedPharmacyMedicineSerializer(medicines, many=True)
+        return Response(serializer.data)
 
 class PharmacySearchAPIView(views.APIView):
     def get(self, request):

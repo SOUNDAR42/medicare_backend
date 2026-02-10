@@ -16,7 +16,7 @@ class Pharmacy_Medicine(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.medicine_instance_id:
-            self.medicine_instance_id = generate_custom_id(Pharmacy_Medicine, 'medicine_instance_id', 'PMI')
+            self.medicine_instance_id = generate_custom_id(Pharmacy_Medicine, 'medicine_instance_id', 'PHME')
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -9,7 +9,7 @@ class Medicine(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.medicine_id:
-            self.medicine_id = generate_custom_id(Medicine, 'medicine_id', 'MD')
+            self.medicine_id = generate_custom_id(Medicine, 'medicine_id', 'MED')
         super().save(*args, **kwargs)
 
     def __str__(self):

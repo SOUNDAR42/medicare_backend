@@ -12,16 +12,26 @@ class Appoints(models.Model):
     appointment_date = models.DateField()
     urgency_score = models.IntegerField(default=1)
 
+    appointment_status = models.CharField(max_length=20, default='Pending') # Pending, Completed, Cancelled
+
     def save(self, *args, **kwargs):
         if not self.appointment_id:
              self.appointment_id = str(uuid.uuid4())
+        
         if not self.token_no:
-            # Count existing appointments for this doctor on this date
+            prefix = 'T'
+            if self.urgency_score > 80:
+                prefix = 'U'
+            
+            # Count existing appointments with the same prefix for this doctor on this date
             existing_count = Appoints.objects.filter(
                 doctor_instance=self.doctor_instance, 
-                appointment_date=self.appointment_date
+                appointment_date=self.appointment_date,
+                token_no__startswith=prefix
             ).count()
-            self.token_no = f"T{existing_count + 1}"
+            
+            self.token_no = f"{prefix}{existing_count + 1}"
+            
         super().save(*args, **kwargs)
 
     def __str__(self):

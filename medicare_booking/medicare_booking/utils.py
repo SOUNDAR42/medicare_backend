@@ -9,21 +9,20 @@ def generate_custom_id(model_class, id_field, prefix):
     :param prefix: The prefix string (e.g., 'PH').
     :return: A string ID.
     """
-    # Find the maximum existing ID
-    max_id = model_class.objects.aggregate(max_id=Max(id_field))['max_id']
+    # Filter IDs starting with the prefix
+    ids = model_class.objects.filter(**{f"{id_field}__startswith": prefix}).values_list(id_field, flat=True)
     
-    if max_id is None:
-        return f"{prefix}1"
-    
-    # Extract the numeric part (assuming format is PrefixNumber)
-    try:
-        current_num = int(max_id[len(prefix):])
-        new_num = current_num + 1
-    except ValueError:
-        # Fallback if ID format is unexpected, though we expect consistent usage
-        return f"{prefix}1"
-        
-    return f"{prefix}{new_num}"
+    max_num = 0
+    for id_val in ids:
+        try:
+            # Extract numeric part
+            num = int(id_val[len(prefix):])
+            if num > max_num:
+                max_num = num
+        except ValueError:
+            continue
+            
+    return f"{prefix}{max_num + 1}"
 
 def haversine(lat1, lon1, lat2, lon2):
     """
