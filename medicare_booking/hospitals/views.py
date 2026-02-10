@@ -34,3 +34,17 @@ class HospitalSearchAPIView(views.APIView):
             "results": serializer.data,
             "message": message
         })
+
+from django.db.models import Q
+
+def hospital_list(request):
+    query = request.GET.get('q')
+    if query:
+        hospitals = Hospital.objects.filter(
+            Q(hospital_name__icontains=query) | 
+            Q(address__icontains=query) |
+            Q(pincode__icontains=query)
+        )
+    else:
+        hospitals = Hospital.objects.all()
+    return render(request, 'hospitals/hospital_list.html', {'hospitals': hospitals, 'query': query})

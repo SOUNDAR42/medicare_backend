@@ -7,6 +7,15 @@ class MedicineViewSet(viewsets.ModelViewSet):
     queryset = Medicine.objects.all()
     serializer_class = MedicineSerializer
 
+from django.db.models import Q
+
 def medicine_list(request):
-    medicines = Medicine.objects.all()
-    return render(request, 'medicines/medicine_list.html', {'medicines': medicines})
+    query = request.GET.get('q')
+    if query:
+        medicines = Medicine.objects.filter(
+            Q(medicine_name__icontains=query) |
+            Q(description__icontains=query)
+        )
+    else:
+        medicines = Medicine.objects.all()
+    return render(request, 'medicines/medicine_list.html', {'medicines': medicines, 'query': query})

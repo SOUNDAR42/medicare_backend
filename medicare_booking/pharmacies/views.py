@@ -34,6 +34,15 @@ class PharmacySearchAPIView(views.APIView):
             "message": message
         })
 
+from django.db.models import Q
+
 def pharmacy_list(request):
-    pharmacies = Pharmacy.objects.all()
-    return render(request, 'pharmacies/pharmacy_list.html', {'pharmacies': pharmacies})
+    query = request.GET.get('q')
+    if query:
+        pharmacies = Pharmacy.objects.filter(
+            Q(pharmacy_name__icontains=query) |
+            Q(address__icontains=query)
+        )
+    else:
+        pharmacies = Pharmacy.objects.all()
+    return render(request, 'pharmacies/pharmacy_list.html', {'pharmacies': pharmacies, 'query': query})

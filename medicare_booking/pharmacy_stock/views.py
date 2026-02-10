@@ -84,6 +84,15 @@ class PharmacyStockViewSet(viewsets.ModelViewSet):
     def medicine(self, request, pk=None):
         pass # Not used here, it is in PharmacyViewSet
 
+from django.db.models import Q
+
 def stock_list(request):
-    stocks = Pharmacy_Medicine.objects.all()
-    return render(request, 'pharmacy_stock/stock_list.html', {'stocks': stocks})
+    query = request.GET.get('q')
+    if query:
+        stocks = Pharmacy_Medicine.objects.filter(
+            Q(medicine__medicine_name__icontains=query) |
+            Q(pharmacy__pharmacy_name__icontains=query)
+        )
+    else:
+        stocks = Pharmacy_Medicine.objects.all()
+    return render(request, 'pharmacy_stock/stock_list.html', {'stocks': stocks, 'query': query})

@@ -1,45 +1,156 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Pharmacy Stock - Medicare Booking{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Stock</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
 
-{% block content %}
-<h2>Pharmacy Stock</h2>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Pharmacy</th>
-            <th>Medicine</th>
-            <th>Manufacturer</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Expiry Date</th>
-            <th>Available</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for stock in stocks %}
-        <tr>
-            <td>{{ stock.medicine_instance_id }}</td>
-            <td>{{ stock.pharmacy.pharmacy_name }}</td>
-            <td>{{ stock.medicine.medicine_name }}</td>
-            <td>{{ stock.manufacturer.name }}</td>
-            <td>{{ stock.price }}</td>
-            <td>{{ stock.stock_quantity }}</td>
-            <td>{{ stock.expiry_date }}</td>
-            <td>
-                {% if stock.is_available %}
-                Yes
-                {% else %}
-                No
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="8">No stock found.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #e67e22;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            width: 50%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #d35400;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #e67e22;
+            color: white;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .low-stock {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .location-cell {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📦 Pharmacy Stock</h1>
+
+        <div class="search-box">
+            <form method="get" style="display: flex; width: 100%; justify-content: center;">
+                <input type="text" name="q" placeholder="Search by medicine or pharmacy name..."
+                    value="{{ query|default:'' }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Pharmacy Details</th>
+                    <th>Medicine</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Expiry</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                <tr>
+                    <td>
+                        <strong>{{ stock.pharmacy.pharmacy_name }}</strong><br>
+                        <span class="location-cell">
+                            {{ stock.pharmacy.street|default:'' }} {{ stock.pharmacy.district }}, {{
+                            stock.pharmacy.state }} - {{ stock.pharmacy.pincode }}<br>
+                            📞 {{ stock.pharmacy.contact }}
+                        </span>
+                    </td>
+                    <td>{{ stock.medicine.medicine_name }}</td>
+                    <td>${{ stock.price }}</td>
+                    <td class="{% if stock.stock_quantity < 10 %}low-stock{% endif %}">
+                        {{ stock.stock_quantity }}
+                    </td>
+                    <td>{{ stock.expiry_date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="no-results">No stock found matching your search.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

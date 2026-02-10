@@ -13,6 +13,16 @@ class PharmacyMedicineSerializer(serializers.ModelSerializer):
         model = Pharmacy_Medicine
         fields = '__all__'
         read_only_fields = ['medicine_instance_id']
+
+    def to_representation(self, instance):
+        return {
+            'medicine_instance_id': instance.medicine_instance_id,
+            'medicine_name': instance.medicine.medicine_name,
+            'pharmacy_name': instance.pharmacy.pharmacy_name,
+            'manufacturer_name': instance.manufacturer.manufacturer_name,
+            'price': str(instance.price),
+            'stock_quantity': instance.stock_quantity,
+        }
 class SimplifiedPharmacyMedicineSerializer(serializers.ModelSerializer):
     medicine_name = serializers.CharField(source='medicine.medicine_name', read_only=True)
     pharmacy_name = serializers.CharField(source='pharmacy.pharmacy_name', read_only=True)
