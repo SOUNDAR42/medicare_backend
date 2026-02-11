@@ -1,6 +1,7 @@
 
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Building2, Stethoscope, Pill } from 'lucide-react';
 import AuthModal from '../components/features/AuthModal';
 
@@ -21,6 +22,7 @@ const RoleCard = ({ icon: Icon, title, description, color, onClick }) => (
 );
 
 const Landing = () => {
+    const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState(null);
 
     return (
@@ -52,28 +54,28 @@ const Landing = () => {
                         title="Patient"
                         description="Book appointments, find medicines, and manage your health records."
                         color="bg-blue-500"
-                        onClick={() => setSelectedRole('Patient')}
+                        onClick={() => navigate('/auth')}
                     />
                     <RoleCard
                         icon={Stethoscope}
                         title="Doctor"
                         description="Manage appointments, view patient history, and handle queues."
                         color="bg-teal-500"
-                        onClick={() => setSelectedRole('Doctor')}
+                        onClick={() => navigate('/auth')}
                     />
                     <RoleCard
                         icon={Building2}
                         title="Hospital"
                         description="Manage facility operations, doctors, and patient admissions."
                         color="bg-indigo-500"
-                        onClick={() => setSelectedRole('Hospital')}
+                        onClick={() => navigate('/auth')}
                     />
                     <RoleCard
                         icon={Pill}
                         title="Pharmacy"
                         description="Manage inventory, track orders, and dispensations."
                         color="bg-rose-500"
-                        onClick={() => setSelectedRole('Pharmacy')}
+                        onClick={() => navigate('/auth')}
                     />
                 </div>
             </div>

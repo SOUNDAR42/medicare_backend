@@ -39,10 +39,14 @@ const EntityCard = ({ type, data, onAction }) => {
                 )}
 
                 {!isDoctor && (
-                    <div className={`flex items-center text-sm font-medium ${data.availableBeds > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        <div className={`h-2 w-2 rounded-full mr-2 ${data.availableBeds > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                        <span>{data.availableBeds > 0 ? `${data.availableBeds} Beds Available` : 'No Beds Available'}</span>
-                    </div>
+                    <>
+                        {data.avgCost > 0 && (
+                            <div className="flex items-center text-sm text-gray-600">
+                                <DollarSign className="h-4 w-4 mr-2 text-gray-400" />
+                                <span>~₹{data.avgCost} Avg. Fee</span>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -50,7 +54,7 @@ const EntityCard = ({ type, data, onAction }) => {
                 onClick={() => onAction(data)}
                 className="w-full btn-primary bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
             >
-                {isDoctor ? 'Book Appointment' : 'View Details'}
+                {isDoctor ? 'Book Appointment' : 'Book Appointment'}
             </button>
         </div>
     );

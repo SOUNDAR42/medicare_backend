@@ -12,7 +12,7 @@ class Appoints(models.Model):
     appointment_date = models.DateField()
     urgency_score = models.IntegerField(default=1)
 
-    appointment_status = models.CharField(max_length=20, default='Pending') # Pending, Completed, Cancelled
+    appointment_status = models.CharField(max_length=20, default='Pending') # Pending, Consulting, Completed, Cancelled
 
     def save(self, *args, **kwargs):
         if not self.appointment_id:

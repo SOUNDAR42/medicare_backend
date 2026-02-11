@@ -13,14 +13,7 @@ const Navbar = () => {
                             MediCare
                         </span>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <button className="p-2 rounded-full hover:bg-gray-50 text-gray-500">
-                            <User className="h-5 w-5" />
-                        </button>
-                        <button className="p-2 rounded-full hover:bg-gray-50 text-gray-500 lg:hidden">
-                            <Menu className="h-5 w-5" />
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </nav>
