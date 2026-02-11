@@ -85,8 +85,11 @@ const PatientDashboard = () => {
     const fetchAppointments = async () => {
         setLoadingAppts(true);
         try {
-            // In a real app, we'd pass the patient ID/Mobile from auth context
-            const data = await api.getAppointments();
+            // Get logged-in user
+            const user = JSON.parse(localStorage.getItem('user'));
+            const patientMobile = user?.mobileno;
+
+            const data = await api.getAppointments(patientMobile);
             setAppointments(data);
         } catch (error) {
             console.error("Failed to fetch appointments", error);

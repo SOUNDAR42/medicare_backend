@@ -24,6 +24,11 @@ class AppointsViewSet(viewsets.ModelViewSet):
         if hospital_id:
             queryset = queryset.filter(doctor_instance__hospital__hospital_id=hospital_id)
             
+        # Filter by Date
+        appointment_date = self.request.query_params.get('appointment_date')
+        if appointment_date:
+            queryset = queryset.filter(appointment_date=appointment_date)
+            
         # Sorting
         # Primary: Urgency Score (Desc)
         # Secondary: Token No (Asc) - Note: String sorting might be imperfect for T1 vs T10 but acceptable for now

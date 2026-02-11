@@ -11,7 +11,17 @@ export const api = {
     getHospitals: () => fetch(`${BASE_URL}/hospitals/`).then(res => res.json()), // Root of hospitals/ is now API
 
     // Appointments
-    getAppointments: () => fetch(`${BASE_URL}/appointments/`).then(res => res.json()),
+    getAppointments: (patient_mobile = null, date = null) => {
+        let url = `${BASE_URL}/appointments/`;
+        const params = new URLSearchParams();
+        if (patient_mobile) params.append('patient_mobile', patient_mobile);
+        if (date) params.append('appointment_date', date);
+
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
+        return fetch(url).then(res => res.json());
+    },
 
     // Pharmacies
     getPharmacies: () => fetch(`${BASE_URL}/pharmacies/`).then(res => res.json()),
@@ -106,10 +116,13 @@ export const api = {
     }).then(res => res.json()),
 
     // Patient OTP Login (Mock)
-    // Patient OTP Login (Mock)
     loginPatient: (credentials) => {
         // In a real app, this would verify with backend
-        return Promise.resolve({ status: 'success', message: 'Logged in successfully' });
+        return Promise.resolve({
+            status: 'success',
+            message: 'Logged in successfully',
+            data: { mobileno: credentials.mobileno }
+        });
     },
 
     // New Endpoints for Dashboard Logic

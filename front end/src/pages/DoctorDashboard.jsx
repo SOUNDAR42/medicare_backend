@@ -12,36 +12,25 @@ const DoctorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser && storedUser.role === 'doctor') {
             setUser(storedUser);
-            fetchData(storedUser.doctor_id);
+            fetchData(storedUser.doctor_id, selectedDate);
         } else {
-            // Redirect or handle unauth (for demo, maybe allow mock if no user)
-            // console.error("No doctor logged in");
-            // Fallback for demo if needed, or just let it fail gracefully
             setLoading(false);
         }
-    }, []);
+    }, [selectedDate]); // Re-fetch when date changes
 
-    const fetchData = async (doctorId) => {
+    const fetchData = async (doctorId, date) => {
         setLoading(true);
         try {
             // 1. Fetch Associations (Hospitals)
-            // We need a way to filter associations by doctor_id. 
-            // The API `getDoctorHospitals` calls `/api/associations/`. 
-            // We should append `?doctor_id=...` if supported.
-            // The viewset supports it.
-            // Let's modify api.js slightly or just append query here manually if api.js is rigid?
-            // api.js `getDoctorHospitals` doesn't take args. 
-            // I'll assume for now I fetch all and filter in frontend (less efficient but safe) 
-            // OR I can use a direct fetch or update api.js. 
-            // Updating api.js is better. I'll do that in a separate step if needed, but for now filtering is fine.
-
             const allAssociationsRes = await api.getDoctorHospitals();
             const allAssociations = Array.isArray(allAssociationsRes) ? allAssociationsRes : (allAssociationsRes.results || []);
-            const myAssociations = allAssociations.filter(a => a.doctor === doctorId); // 'doctor' is the ID in serializer
+            const myAssociations = allAssociations.filter(a => a.doctor === doctorId);
 
             // Separate Invitations vs Active
             const active = myAssociations.filter(a => a.is_accepted);
@@ -64,8 +53,8 @@ const DoctorDashboard = () => {
             }
 
             // 2. Fetch Appointments
-            // Ideally filter by doctor_id
-            const allAppointmentsRes = await api.getAppointments();
+            // Pass date to filter
+            const allAppointmentsRes = await api.getAppointments(null, date);
             const allAppointments = Array.isArray(allAppointmentsRes) ? allAppointmentsRes : (allAppointmentsRes.results || []);
             const myAppointments = allAppointments.filter(apt => apt.doctor_details?.doctor === doctorId);
 
@@ -81,7 +70,6 @@ const DoctorDashboard = () => {
             }));
 
             // Create "Urgency Queue": Sort by Urgency (Desc) then Token (Asc)
-            // Urgency > 80 is High
             transformedApts.sort((a, b) => {
                 if (b.urgencyScore !== a.urgencyScore) return b.urgencyScore - a.urgencyScore;
                 return a.token.localeCompare(b.token, undefined, { numeric: true });
@@ -205,6 +193,17 @@ const DoctorDashboard = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
+                        {/* Date Picker */}
+                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                            <Calendar className="h-4 w-4 text-gray-500" />
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="bg-transparent text-sm font-medium text-gray-700 focus:outline-none"
+                            />
+                        </div>
+
                         {/* Toggle Availability for Selected */}
                         {selectedHospital && (
                             <button
