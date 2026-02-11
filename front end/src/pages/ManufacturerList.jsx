@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
-import { Search, Factory, RefreshCw, Plus } from 'lucide-react';
+import { Search, Factory, RefreshCw, Plus, Building2 } from 'lucide-react';
 
 const ManufacturerList = () => {
     const navigate = useNavigate();
@@ -10,9 +10,7 @@ const ManufacturerList = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        fetchManufacturers();
-    }, []);
+    useEffect(() => { fetchManufacturers(); }, []);
 
     const fetchManufacturers = async () => {
         try {
@@ -36,70 +34,118 @@ const ManufacturerList = () => {
         setFilteredManufacturers(filtered);
     }, [searchTerm, manufacturers]);
 
-    if (loading) return <div className="p-8 text-center pt-20">Loading manufacturers...</div>;
+    const gradients = [
+        'from-teal-500 to-emerald-500',
+        'from-violet-500 to-purple-500',
+        'from-blue-500 to-indigo-500',
+        'from-rose-500 to-pink-500',
+        'from-amber-500 to-orange-500',
+        'from-sky-500 to-cyan-500',
+    ];
+
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="flex items-center gap-3 text-teal-600">
+                <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600" />
+                <span className="font-medium">Loading manufacturers...</span>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manufacturers</h1>
-                        <p className="text-gray-500">Manage pharmaceutical manufacturers.</p>
+        <div className="min-h-screen bg-background py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-200">
+                            <Building2 className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Manufacturer Registry</h1>
+                            <p className="text-sm text-gray-500">All registered pharmaceutical partners</p>
+                        </div>
                     </div>
                     <button
                         onClick={() => navigate('/manufacture/add_manufacture')}
-                        className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2 font-medium"
+                        className="btn-accent flex items-center justify-center gap-2"
                     >
-                        <Plus className="h-5 w-5" />
-                        Add Manufacturer
+                        <Plus className="h-5 w-5" /> New Manufacturer
                     </button>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="stat-card">
+                        <p className="text-sm font-medium text-gray-500">Total Manufacturers</p>
+                        <p className="text-3xl font-extrabold text-gray-900 mt-1">{manufacturers.length}</p>
+                    </div>
+                    <div className="stat-card">
+                        <p className="text-sm font-medium text-gray-500">Filtered Results</p>
+                        <p className="text-3xl font-extrabold text-gray-900 mt-1">{filteredManufacturers.length}</p>
+                    </div>
+                </div>
+
+                {/* Content Card */}
+                <div className="card p-0 overflow-hidden">
                     {/* Toolbar */}
-                    <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center bg-gray-50">
+                    <div className="p-5 border-b border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center">
                         <div className="relative w-full md:w-96">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Search manufacturers..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary"
+                                placeholder="Search by company name..."
+                                className="input-modern pl-11"
                                 value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <button onClick={fetchManufacturers} className="p-2 text-gray-400 hover:text-primary rounded-lg hover:bg-gray-100" title="Refresh">
-                            <RefreshCw className="h-5 w-5" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <span className="badge badge-purple">{filteredManufacturers.length} Results</span>
+                            <button onClick={fetchManufacturers} className="p-2.5 text-gray-400 hover:text-violet-600 rounded-xl hover:bg-violet-50 transition-colors" title="Refresh">
+                                <RefreshCw className="h-5 w-5" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 border-b border-gray-200">
+                        <table className="table-premium">
+                            <thead>
                                 <tr>
-                                    <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">ID</th>
-                                    <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Manufacturer Name</th>
+                                    <th>ID</th>
+                                    <th>Manufacturer Name</th>
+                                    <th className="text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredManufacturers.length > 0 ? filteredManufacturers.map(m => (
-                                    <tr key={m.manufacturer_id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                                        <td className="py-4 px-6 font-mono text-xs text-gray-500">
-                                            {m.manufacturer_id}
-                                        </td>
-                                        <td className="py-4 px-6 font-medium text-gray-900">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                                                    <Factory className="h-5 w-5" />
+                                {filteredManufacturers.length > 0 ? (
+                                    filteredManufacturers.map((m, idx) => (
+                                        <tr key={m.manufacturer_id}>
+                                            <td className="font-mono text-xs text-gray-400">
+                                                #{String(m.manufacturer_id).padStart(4, '0')}
+                                            </td>
+                                            <td>
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                                                        {m.manufacturer_name.substring(0, 2).toUpperCase()}
+                                                    </div>
+                                                    <span className="font-semibold text-gray-900">{m.manufacturer_name}</span>
                                                 </div>
-                                                {m.manufacturer_name}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )) : (
+                                            </td>
+                                            <td className="text-right">
+                                                <button className="text-violet-600 hover:text-violet-800 font-semibold text-sm hover:bg-violet-50 px-3 py-1.5 rounded-lg transition-colors">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
                                     <tr>
-                                        <td colSpan="2" className="p-12 text-center text-gray-500">No manufacturers found.</td>
+                                        <td colSpan="3" className="p-12 text-center text-gray-400">
+                                            <Factory className="mx-auto h-8 w-8 text-gray-300 mb-3" />
+                                            No manufacturers found matching your search.
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>

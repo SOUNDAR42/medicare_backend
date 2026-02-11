@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
-import { Search, Stethoscope, RefreshCw, Plus } from 'lucide-react';
+import { Search, Stethoscope, RefreshCw, Plus, Heart } from 'lucide-react';
+
+const specIcons = ['💊', '❤️', '🦴', '👶', '🧴', '🧠', '🩺', '👁️', '👂', '🧘'];
 
 const SpecializationList = () => {
     const navigate = useNavigate();
@@ -10,9 +12,7 @@ const SpecializationList = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        fetchSpecializations();
-    }, []);
+    useEffect(() => { fetchSpecializations(); }, []);
 
     const fetchSpecializations = async () => {
         try {
@@ -36,76 +36,95 @@ const SpecializationList = () => {
         setFilteredSpecs(filtered);
     }, [searchTerm, specs]);
 
-    if (loading) return <div className="p-8 text-center pt-20">Loading specializations...</div>;
+    const gradients = [
+        'from-teal-500 to-emerald-500',
+        'from-rose-500 to-pink-500',
+        'from-blue-500 to-indigo-500',
+        'from-violet-500 to-purple-500',
+        'from-amber-500 to-orange-500',
+        'from-cyan-500 to-sky-500',
+        'from-emerald-500 to-green-500',
+        'from-fuchsia-500 to-pink-500',
+        'from-indigo-500 to-violet-500',
+        'from-lime-500 to-green-500',
+    ];
+
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="flex items-center gap-3 text-teal-600">
+                <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600" />
+                <span className="font-medium">Loading specializations...</span>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Specializations</h1>
-                        <p className="text-gray-500">Manage medical specializations.</p>
+        <div className="min-h-screen bg-background py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-200">
+                            <Heart className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Specializations</h1>
+                            <p className="text-sm text-gray-500">Browse and manage medical specializations</p>
+                        </div>
                     </div>
                     <button
                         onClick={() => navigate('/specializtion/add_specializtion')}
-                        className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2 font-medium"
+                        className="btn-primary flex items-center justify-center gap-2"
                     >
-                        <Plus className="h-5 w-5" />
-                        Add Specialization
+                        <Plus className="h-5 w-5" /> Add Specialization
                     </button>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                    {/* Toolbar */}
-                    <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center bg-gray-50">
-                        <div className="relative w-full md:w-96">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search specializations..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary"
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <button onClick={fetchSpecializations} className="p-2 text-gray-400 hover:text-primary rounded-lg hover:bg-gray-100" title="Refresh">
+                {/* Search Bar */}
+                <div className="card mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full md:w-96">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search specializations..."
+                            className="input-modern pl-11"
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="badge badge-success">{filteredSpecs.length} Specializations</span>
+                        <button onClick={fetchSpecializations} className="p-2.5 text-gray-400 hover:text-teal-600 rounded-xl hover:bg-teal-50 transition-colors" title="Refresh">
                             <RefreshCw className="h-5 w-5" />
                         </button>
                     </div>
-
-                    {/* Table */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">ID</th>
-                                    <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Specialization Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredSpecs.length > 0 ? filteredSpecs.map(s => (
-                                    <tr key={s.specialization_id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                                        <td className="py-4 px-6 font-mono text-xs text-gray-500">
-                                            {s.specialization_id}
-                                        </td>
-                                        <td className="py-4 px-6 font-medium text-gray-900">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-green-50 rounded-lg text-green-600">
-                                                    <Stethoscope className="h-5 w-5" />
-                                                </div>
-                                                {s.specialization_name}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )) : (
-                                    <tr>
-                                        <td colSpan="2" className="p-12 text-center text-gray-500">No specializations found.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
+
+                {/* Specialization Grid */}
+                {filteredSpecs.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {filteredSpecs.map((s, idx) => (
+                            <div
+                                key={s.specialization_id}
+                                className="group card hover:shadow-glow-teal text-center relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }} />
+
+                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradients[idx % gradients.length]} flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                    <span className="text-2xl">{specIcons[idx % specIcons.length]}</span>
+                                </div>
+
+                                <h3 className="font-bold text-gray-900 text-lg mb-1">{s.specialization_name}</h3>
+                                <p className="text-xs text-gray-400 font-mono">ID: {s.specialization_id}</p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="card text-center py-16 border-dashed">
+                        <Stethoscope className="h-10 w-10 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray-400 font-medium">No specializations found.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
-import { Building2, Lock, Activity } from 'lucide-react';
+import { Building2, Lock, ArrowRight, Shield } from 'lucide-react';
 
 const HospitalLogin = () => {
     const navigate = useNavigate();
@@ -34,63 +34,58 @@ const HospitalLogin = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-                <div className="text-center mb-8">
-                    <div className="bg-indigo-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                        <Activity className="h-8 w-8 text-indigo-600" />
+        <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob" />
+                <div className="absolute bottom-20 -left-40 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000" />
+            </div>
+
+            <div className="w-full max-w-md relative z-10 animate-slide-up">
+                <div className="glass-card p-8">
+                    <div className="text-center mb-8">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200">
+                            <Building2 className="h-10 w-10 text-white" />
+                        </div>
+                        <h2 className="text-2xl font-extrabold text-gray-900">Hospital Login</h2>
+                        <p className="text-gray-500 mt-2">Manage hospital operations and analytics</p>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Hospital Login</h2>
-                    <p className="text-gray-500">Manage hospital operations and analytics</p>
+
+                    {error && (
+                        <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm mb-6 border border-red-100 flex items-center gap-2">
+                            <span className="block w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Hospital ID</label>
+                            <div className="relative">
+                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <input type="text" name="hospital_id" value={credentials.hospital_id} onChange={handleChange} className="input-modern pl-12" placeholder="E.g., HOSP123" required />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <input type="password" name="password" value={credentials.password} onChange={handleChange} className="input-modern pl-12" placeholder="••••••••" required />
+                            </div>
+                        </div>
+                        <button type="submit" disabled={loading} className="w-full btn-primary py-3.5 rounded-xl flex items-center justify-center gap-2 mt-2">
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                                    Logging in...
+                                </span>
+                            ) : (<> Sign In <ArrowRight className="h-5 w-5" /> </>)}
+                        </button>
+                    </form>
+                    <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+                        <Shield className="h-3.5 w-3.5" />
+                        <span>Protected by Medicare Security</span>
+                    </div>
                 </div>
-
-                {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6">
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Hospital ID</label>
-                        <div className="relative">
-                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <input
-                                type="text"
-                                name="hospital_id"
-                                value={credentials.hospital_id}
-                                onChange={handleChange}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                                placeholder="E.g., HOSP123"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <input
-                                type="password"
-                                name="password"
-                                value={credentials.password}
-                                onChange={handleChange}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                                placeholder="••••••••"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
-                    >
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
             </div>
         </div>
     );
